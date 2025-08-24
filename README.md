@@ -117,8 +117,7 @@ Backend/
 ---
 
 ##  File Upload
-- Implemented with **Multer**.  
-- Product images are stored inside `/uploads/products`.
+- Implemented with **Multer**.
 
 ---
 
@@ -148,4 +147,5 @@ Backend/
 ##  Author
 **Hasnaa Nageh**  
 🔗 [GitHub Profile](https://github.com/Hasnaa-Nageh)  
+
 
