@@ -103,7 +103,7 @@ Backend/
 - `POST /api/address/` → Add user address  
 - `GET /api/address/` → Get user addresses  
 
-### 🛠 Admin Dashboard
+###  Admin Dashboard
 - Manage Users, Products, Categories, Brands, Orders, and Reviews (Admin only).
 
 ---
@@ -148,3 +148,4 @@ Backend/
 ##  Author
 **Hasnaa Nageh**  
 🔗 [GitHub Profile](https://github.com/Hasnaa-Nageh)  
+
