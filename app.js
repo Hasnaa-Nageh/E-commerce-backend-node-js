@@ -17,6 +17,10 @@ const adminRouter = require("./routes/admin.route");
 
 const errorHandler = require("./middleware/errorHandler");
 
+const swaggerUi = require("swagger-ui-express");
+const fs = require("fs");
+const yaml = require("js-yaml");
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
@@ -33,12 +37,19 @@ app.use("/api/address", addressRoute);
 // app.use("/api/coupon", couponRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/order", orderRoutes);
+
 // dashboard routes
 app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.send("Backend API is running 🚀");
 });
+
+
+const openapiSpec = yaml.load(fs.readFileSync('./openApi.yaml', 'utf8'));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+
 
 app.use(errorHandler);
 

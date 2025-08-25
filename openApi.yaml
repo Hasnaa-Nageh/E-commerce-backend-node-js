@@ -1,0 +1,482 @@
+openapi: 3.1.0
+info:
+  title: APIFiddle Sample Definition
+  description: Example workspace
+  version: 0.0.0
+paths:
+  /api/auth/signup:
+    post:
+      operationId: userSignup
+      tags:
+        - auth
+      summary: User signup
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+                title: UserSignupCreated
+      requestBody:
+        required: true
+        description: |
+          {
+            "name": "Test User",
+            "email": "test@example.com",
+            "password": "12345678"
+          }
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+  /api/auth/refresh-token:
+    post:
+      operationId: refreshAccessToken
+      tags:
+        - auth
+      summary: Refresh Access Token
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      parameters: []
+  /api/auth/change-password:
+    post:
+      operationId: changePassword
+      tags:
+        - auth
+      summary: Change Password
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+              required:
+                - oldPassword
+                - newPassword
+  /api/auth/logout:
+    post:
+      operationId: userLogout
+      tags:
+        - auth
+      summary: User Logout
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+  /api/auth/login:
+    post:
+      operationId: userLogin
+      tags:
+        - auth
+      summary: "User Login "
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      parameters: []
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+  /api/user:
+    post:
+      operationId: addUser
+      tags:
+        - user
+      summary: Add User
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+                - role
+    get:
+      operationId: getAllUsers
+      tags:
+        - user
+      summary: Get All Users
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+  /api/user/{id}:
+    get:
+      operationId: getSingleUser
+      tags:
+        - user
+      summary: Get Single User
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+    put:
+      operationId: updateUser
+      tags:
+        - user
+      summary: Update User
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+                  role:
+                    type: string
+                required:
+                  - name
+                  - email
+                  - password
+                  - role
+    delete:
+      operationId: deleteUser
+      tags:
+        - user
+      summary: Delete User
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "204":
+          description: The request was successful, but there is no content to return in
+            the response.
+          content:
+            application/json:
+              schema:
+                type: "null"
+  /api/user/me:
+    get:
+      operationId: getProfile
+      tags:
+        - profile
+      summary: Get Profile
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+    put:
+      operationId: updateProfile
+      tags:
+        - profile
+      summary: Update Profile
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+    delete:
+      operationId: deleteProfile
+      tags:
+        - profile
+      summary: Delete Profile
+      responses:
+        "204":
+          description: The request was successful, but there is no content to return in
+            the response.
+          content:
+            application/json:
+              schema:
+                type: "null"
+  /api/category:
+    post:
+      operationId: addCategory
+      tags:
+        - category
+      summary: Add Category
+      responses:
+        "201":
+          description: The request was successful, and a new resource was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  image:
+                    type: string
+                required:
+                  - name
+                  - image
+    get:
+      operationId: getAllCategories
+      tags:
+        - category
+      summary: Get All Categories
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+  /api/category/{id}:
+    get:
+      operationId: getSingleCategory
+      tags:
+        - category
+      summary: Get Single Category
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: The request was successful, and the server has returned the
+            requested resource in the response body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                required:
+                  - data
+    put:
+      operationId: updateCategory
+      tags:
+        - category
+      summary: Update Category
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        description: ""
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  image:
+                    type: string
+                required:
+                  - name
+                  - image
+    delete:
+      operationId: deleteCategory
+      tags:
+        - category
+      summary: Delete Category
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "204":
+          description: The request was successful, but there is no content to return in
+            the response.
+          content:
+            application/json:
+              schema:
+                type: "null"
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+tags:
+  - name: auth
+  - name: user
+  - name: profile
+  - name: category
