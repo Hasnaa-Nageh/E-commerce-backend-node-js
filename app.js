@@ -17,6 +17,8 @@ const adminRouter = require("./routes/admin.route");
 
 const errorHandler = require("./middleware/errorHandler");
 
+const path = require("path"); 
+
 const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 const yaml = require("js-yaml");
@@ -46,9 +48,10 @@ app.get("/", (req, res) => {
 });
 
 
-const openapiSpec = yaml.load(fs.readFileSync('./openApi.yaml', 'utf8'));
+const openApiPath = path.resolve(__dirname, "openApi.yaml");
+const openapiSpec = yaml.load(fs.readFileSync(openApiPath, "utf8"));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 
 app.use(errorHandler);
