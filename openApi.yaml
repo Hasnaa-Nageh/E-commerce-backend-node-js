@@ -196,7 +196,8 @@ paths:
       summary: Get All Users
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -217,7 +218,8 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -237,7 +239,8 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -280,7 +283,8 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         "204":
-          description: The request was successful, but there is no content to return in
+          description:
+            The request was successful, but there is no content to return in
             the response.
           content:
             application/json:
@@ -294,7 +298,8 @@ paths:
       summary: Get Profile
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -312,7 +317,8 @@ paths:
       summary: Update Profile
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -348,7 +354,8 @@ paths:
       summary: Delete Profile
       responses:
         "204":
-          description: The request was successful, but there is no content to return in
+          description:
+            The request was successful, but there is no content to return in
             the response.
           content:
             application/json:
@@ -396,7 +403,8 @@ paths:
       summary: Get All Categories
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -417,7 +425,8 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         "200":
-          description: The request was successful, and the server has returned the
+          description:
+            The request was successful, and the server has returned the
             requested resource in the response body.
           content:
             application/json:
@@ -461,7 +470,8 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         "204":
-          description: The request was successful, but there is no content to return in
+          description:
+            The request was successful, but there is no content to return in
             the response.
           content:
             application/json:
