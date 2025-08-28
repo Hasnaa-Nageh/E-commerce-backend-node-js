@@ -24,13 +24,7 @@ router.post(
 );
 router.get("/", getAllCategories);
 router.get("/:id", getSingleCategory);
-router.put(
-  "/:id",
-  authenticateToken,
-  authorizeRole("admin"),
-  upload.single("image"),
-  updateCategory
-);
+router.put("/:id", authenticateToken, upload.single("image"), updateCategory);
 router.delete(
   "/:id",
   authenticateToken,

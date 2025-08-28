@@ -5,107 +5,83 @@ const {
 const User = require("./../models/user.model");
 const bcrypt = require("bcrypt");
 
-const signUp = async (req, res, next) => {
-  try {
-    const { name, email, password } = req.body;
+const signUp = async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password)
+    return res.status(400).json({ message: "All fields required" });
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All Fields Are Required" });
-    }
+  const existUser = await User.findOne({ email });
+  if (existUser)
+    return res.status(409).json({ message: "User already exists" });
 
-    const existUser = await User.findOne({ email });
-    if (existUser) {
-      return res.status(409).json({ message: "User Already Exists" });
-    }
+  const newUser = await User.create({ name, email, password, role: "user" });
 
-    // Hash Password
-    // const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      name,
-      email,
-      password,
-      role: "user",
+  const accessToken = generateAccessToken(newUser);
+  const refreshToken = generateRefreshToken(newUser);
+
+  newUser.refreshToken = refreshToken;
+  await newUser.save();
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res
+    .status(201)
+    .json({
+      message: "Signup successful",
+      user: { id: newUser._id, name, email, role: newUser.role },
     });
-
-    //Tokens
-    const accessToken = generateAccessToken(newUser);
-    const refreshToken = generateRefreshToken(newUser);
-
-    newUser.refreshToken = refreshToken;
-    await newUser.save();
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    const { password: _, refreshToken: __, ...userData } = newUser.toObject();
-    res.status(201).json({
-      message: "signup successful",
-      // accessToken,
-      user: userData,
-    });
-  } catch (err) {
-    console.log(`Error :- ${err}`);
-    next(err);
-  }
 };
 
-const Login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and Password are Required" });
-    }
-    const user = await User.findOne({ email: req.body.email }).select(
-      "+password"
-    );
+const Login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
 
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+  user.refreshToken = refreshToken;
+  await user.save();
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
-    user.refreshToken = refreshToken;
-    await user.save();
-
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    const { password: _, refreshToken: __, ...userData } = user.toObject();
-
-    res.status(200).json({
+  res
+    .status(200)
+    .json({
       message: "Login successful",
-      // accessToken,
-      user: userData,
+      user: { id: user._id, name: user.name, email, role: user.role },
     });
-  } catch (err) {
-    console.log(`Error :- ${err}`);
-    next(err);
-  }
+};
+
+const logOut = async (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 const refreshToken = async (req, res, next) => {
@@ -189,49 +165,6 @@ const me = async (req, res, next) => {
     res.json(user);
   } catch (err) {
     console.log(err);
-    next(err);
-  }
-};
-
-const logOut = async (req, res, next) => {
-  try {
-    const refreshToken = req.cookies.refreshToken;
-
-    if (!refreshToken) {
-      return res.status(400).json({ message: "No refresh token found" });
-    }
-
-    const user = await User.findOne({ refreshToken });
-
-    if (!user) {
-      res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "Strict",
-      });
-      return res.status(200).json({ message: "Logged out successfully" });
-    }
-    user.refreshToken = null;
-    await user.save();
-
-    // Clear cookie in browser
-
-    // Clear cookies
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    });
-
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
-    });
-
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (err) {
-    console.log(`Error :- ${err}`);
     next(err);
   }
 };
