@@ -1,11 +1,28 @@
-// 
+// // 
 
 
-const app = require("./app");
-const connectDB = require("./config/db");
-const serverless = require("serverless-http");
-require("dotenv").config();
+// const app = require("./app");
+// const connectDB = require("./config/db");
+// const serverless = require("serverless-http");
+// require("dotenv").config();
 
-connectDB();
+// connectDB();
 
-module.exports = serverless(app);
+// module.exports = serverless(app);
+
+const express = require("express");
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.get("/", (req, res) => {
+  res.send("API is working 🎉");
+});
+
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Hello from Vercel!" });
+});
+
+module.exports = app;
