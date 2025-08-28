@@ -1,21 +1,29 @@
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+require("dotenv").config();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
     let folder = "others";
-    
+
     if (file.fieldname === "image") folder = "categories";
     if (file.fieldname === "logo") folder = "brands";
     if (file.fieldname === "imgCover" || file.fieldname === "images")
       folder = "products";
 
-    cb(null, path.join(__dirname, `../uploads/${folder}`));
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const fileName = `${file.fieldname}-${Date.now()}${ext}`;
-    cb(null, fileName);
+    return {
+      folder: folder,
+      allowed_formats: ["jpg", "png", "jpeg", "webp"],
+      public_id: `${file.fieldname}-${Date.now()}`,
+    };
   },
 });
 
@@ -30,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 }, 
 });
 
 module.exports = upload;

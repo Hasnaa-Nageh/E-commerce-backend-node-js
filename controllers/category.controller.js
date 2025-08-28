@@ -22,7 +22,7 @@ const addCategory = async (req, res, next) => {
     }
 
     if (req.file) {
-      req.body.image = req.file.filename;
+      req.body.image = req.file.path;
     }
 
     const category = new Category(req.body);
@@ -100,7 +100,7 @@ const updateCategory = async (req, res, next) => {
       req.body.slug = slugify(req.body.name, { lower: true });
     }
     if (req.file) {
-      req.body.image = req.file.filename;
+      req.body.image = req.file.path;
     }
 
     const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
