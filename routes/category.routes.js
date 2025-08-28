@@ -17,7 +17,7 @@ router.use("/:id/sub-category", subCategoryRoute);
 // admin only
 router.post(
   "/",
-  authenticateToken,
+  // authenticateToken,
   // authorizeRole("admin"),
   upload.single("image"),
   addCategory
