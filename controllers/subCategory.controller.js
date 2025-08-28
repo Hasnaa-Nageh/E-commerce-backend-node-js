@@ -31,7 +31,7 @@ const addSubCategory = async (req, res, next) => {
       });
     }
     if (req.file) {
-      req.body.imageSub = req.file.path;
+      req.body.imageSub = req.file.path || req.file.secure_url;
     }
 
     const subCategory = new SubCategory(req.body);
@@ -82,7 +82,7 @@ const getAllSubCategories = async (req, res, next) => {
       },
     });
   } catch (err) {
-    console.error("Error in addSubCategory:", err); 
+    console.error("Error in addSubCategory:", err);
     return res.status(500).json({
       success: false,
       message: err.message || "Internal server error",
