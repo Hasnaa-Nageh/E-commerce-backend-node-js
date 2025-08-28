@@ -47,8 +47,7 @@ const slugify = require("slugify");
 //     next(err);
 //   }
 // };
-
-const addSubCategory = async (req, res) => {
+const addSubCategory= async (req, res) => {
   try {
     const { name, category } = req.body;
 
@@ -62,7 +61,7 @@ const addSubCategory = async (req, res) => {
     const newSubCategory = await SubCategory.create({
       name,
       category,
-      image: req.file.path, // رابط الصورة من Cloudinary
+      image: req.file.path, // Cloudinary URL
     });
 
     res.status(201).json({
@@ -78,6 +77,7 @@ const addSubCategory = async (req, res) => {
     });
   }
 };
+
 
 const getAllSubCategories = async (req, res, next) => {
   try {
