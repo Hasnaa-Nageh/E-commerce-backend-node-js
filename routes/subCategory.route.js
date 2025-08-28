@@ -13,6 +13,7 @@ const {
 const validate = require("../middleware/validate.middleware");
 const { authorizeRole } = require("../middleware/authorizeRole.middleware");
 const { authenticateToken } = require("../middleware/auth.middleware");
+const upload = require("../middleware/upload.middleware");
 
 const subCategoryRouter = express.Router({ mergeParams: true });
 
@@ -21,6 +22,7 @@ subCategoryRouter.post(
   validate(createSubCategorySchema),
   authenticateToken,
   authorizeRole("admin"),
+  upload.single("imageSub"),
   addSubCategory
 );
 subCategoryRouter.get("/", getAllSubCategories);
@@ -30,6 +32,7 @@ subCategoryRouter.put(
   validate(updateSubCategorySchema),
   authenticateToken,
   authorizeRole("admin"),
+  upload.single("imageSub"),
   UpdateSubCategory
 );
 subCategoryRouter.delete(

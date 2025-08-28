@@ -30,10 +30,11 @@ const addSubCategory = async (req, res, next) => {
         message: "SubCategory already exists",
       });
     }
-    const subCategory = new SubCategory({
-      ...req.body,
-      createdBy: req.user?._id,
-    });
+    if (req.file) {
+      req.body.imageSub = req.file.path;
+    }
+
+    const subCategory = new SubCategory(req.body);
     await subCategory.save();
 
     return res.status(201).json({
@@ -50,7 +51,7 @@ const addSubCategory = async (req, res, next) => {
 const getAllSubCategories = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, sort = "-createdAt" } = req.query;
-    
+
     let filterObj = {};
     if (req.params.id) filterObj.category = req.params.id;
     const subCategories = await SubCategory.find(filterObj)
@@ -113,6 +114,9 @@ const UpdateSubCategory = async (req, res, next) => {
   try {
     if (req.body.name) {
       req.body.slug = slugify(req.body.name, { lower: true });
+    }
+    if (req.file) {
+      req.body.imageSub = req.file.path;
     }
 
     if (req.body.category) {

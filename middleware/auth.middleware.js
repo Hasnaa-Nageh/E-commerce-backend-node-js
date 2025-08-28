@@ -9,7 +9,7 @@ function authenticateToken(req, res, next) {
 
   try {
     const payload = jwt.verify(token, process.env.ACCESS_TOKEN);
-    req.user = payload; // هنا نخزن معلومات اليوزر في req.user
+    req.user = payload;
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid or expired token" });

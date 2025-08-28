@@ -22,6 +22,9 @@ const subCategorySchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "user",
     },
+    imageSub: {
+      type: String,
+    },
   },
   { timestamps: true, versionKey: false }
 );
