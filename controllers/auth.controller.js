@@ -24,13 +24,13 @@ const signUp = async (req, res) => {
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "strict",
     maxAge: 15 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "strict",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -57,14 +57,14 @@ const Login = async (req, res) => {
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: false,
+    sameSite: "lax",
     maxAge: 15 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+    secure: false,
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -143,24 +143,11 @@ const changePassword = async (req, res, next) => {
   }
 };
 
-const me = async (req, res, next) => {
+const me = async (req, res) => {
   try {
-    const token = req.cookies.accessToken;
-    if (!token) {
-      return res.status(401).json({ message: "No access token provided" });
-    }
+    const userId = req.user.id;
 
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.ACCESS_TOKEN);
-    } catch (err) {
-      return res
-        .status(401)
-        .json({ message: "Invalid or expired access token" });
-    }
-
-    // نجيب المستخدم من الداتابيز
-    const user = await User.findById(payload.id).select("-password -__v");
+    const user = await User.findById(userId).select("-password -__v");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -168,8 +155,9 @@ const me = async (req, res, next) => {
     res.json({ user });
   } catch (err) {
     console.error(err);
-    next(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 module.exports = { Login, signUp, refreshToken, logOut, changePassword, me };
