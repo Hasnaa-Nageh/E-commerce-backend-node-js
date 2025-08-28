@@ -9,7 +9,6 @@ const addCategory = async (req, res, next) => {
         message: "Category name is required",
       });
     }
-
     req.body.slug = slugify(req.body.name, { lower: true });
 
     // check if category already exists

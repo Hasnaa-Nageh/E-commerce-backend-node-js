@@ -4,9 +4,9 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 require("dotenv").config();
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const storage = new CloudinaryStorage({
@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
 
     if (file.fieldname === "image") folder = "categories";
     if (file.fieldname === "logo") folder = "brands";
-    if (file.fieldname === "imageSub") folder = "imageSub";
+    if (file.fieldname === "imagesubcategory") folder = "imageSub";
     if (file.fieldname === "imgCover" || file.fieldname === "images")
       folder = "products";
 

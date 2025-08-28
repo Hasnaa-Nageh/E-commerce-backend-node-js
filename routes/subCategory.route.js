@@ -25,14 +25,15 @@ subCategoryRouter.post(
   validate(createSubCategorySchema),
   addSubCategory
 );
+
 subCategoryRouter.get("/", getAllSubCategories);
 subCategoryRouter.get("/:id", getSingleSubCategory);
 subCategoryRouter.put(
   "/:id",
+  upload.single("imageSub"),
   validate(updateSubCategorySchema),
   authenticateToken,
   authorizeRole("admin"),
-  upload.single("imageSub"),
   UpdateSubCategory
 );
 subCategoryRouter.delete(
