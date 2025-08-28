@@ -2,49 +2,80 @@ const Category = require("../models/category.model");
 const SubCategory = require("./../models/subCategory.model");
 const slugify = require("slugify");
 
-const addSubCategory = async (req, res, next) => {
+// const addSubCategory = async (req, res, next) => {
+//   try {
+//     if (!req.body.name) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "SubCategory name us Required" });
+//     }
+//     req.body.slug = slugify(req.body.name, { lower: true });
+
+//     // check if category exists (relation)
+//     const category = await Category.findById(req.body.category);
+//     if (!category) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Parent category not found",
+//       });
+//     }
+//     // check if subCategory exists
+
+//     const existingSubCategory = await SubCategory.findOne({
+//       slug: req.body.slug,
+//     });
+//     if (existingSubCategory) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "SubCategory already exists",
+//       });
+//     }
+//     if (req.file) {
+//       req.body.imageSub = req.file.path || req.file.secure_url;
+//     }
+
+//     const subCategory = new SubCategory(req.body);
+//     await subCategory.save();
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "SubCategory created successfully",
+//       data: subCategory,
+//     });
+//   } catch (err) {
+//     console.log(`Error :- ${err}`);
+//     next(err);
+//   }
+// };
+
+const addSubCategory = async (req, res) => {
   try {
-    if (!req.body.name) {
-      return res
-        .status(400)
-        .json({ success: false, message: "SubCategory name us Required" });
-    }
-    req.body.slug = slugify(req.body.name, { lower: true });
+    const { name, category } = req.body;
 
-    // check if category exists (relation)
-    const category = await Category.findById(req.body.category);
-    if (!category) {
+    if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Parent category not found",
+        message: "Image is required",
       });
     }
-    // check if subCategory exists
 
-    const existingSubCategory = await SubCategory.findOne({
-      slug: req.body.slug,
+    const newSubCategory = await SubCategory.create({
+      name,
+      category,
+      image: req.file.path, // رابط الصورة من Cloudinary
     });
-    if (existingSubCategory) {
-      return res.status(400).json({
-        success: false,
-        message: "SubCategory already exists",
-      });
-    }
-    if (req.file) {
-      req.body.imageSub = req.file.path || req.file.secure_url;
-    }
 
-    const subCategory = new SubCategory(req.body);
-    await subCategory.save();
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
-      message: "SubCategory created successfully",
-      data: subCategory,
+      data: newSubCategory,
     });
-  } catch (err) {
-    console.log(`Error :- ${err}`);
-    next(err);
+  } catch (error) {
+    console.error("Error creating sub category:", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong, please try again later",
+      error: error.message,
+    });
   }
 };
 

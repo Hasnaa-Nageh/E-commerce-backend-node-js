@@ -3,13 +3,13 @@ const Joi = require("joi");
 const createSubCategorySchema = Joi.object({
   name: Joi.string().min(2).max(50).required(),
   category: Joi.string().required(),
-  imageSub: Joi.any(),
+  // مش محتاج تتحقق من imageSub هنا، multer هيتكفل
 });
 
 const updateSubCategorySchema = Joi.object({
   name: Joi.string().min(2).max(50).optional(),
   category: Joi.string().optional(),
-  imageSub: Joi.any(),
+  // برضه هنا مش محتاج
 });
 
 module.exports = {
