@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
 
     if (file.fieldname === "image") folder = "categories";
     if (file.fieldname === "logo") folder = "brands";
-    if (file.fieldname === "imageSub") folder = "imageSub";
+    if (file.fieldname === "imageSub") folder = "subCategories";
     if (file.fieldname === "imgCover" || file.fieldname === "images")
       folder = "products";
 
@@ -39,7 +39,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
 
 module.exports = upload;
