@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify"); // ✅ لازم نستوردها
 
 const subCategorySchema = new mongoose.Schema(
   {
@@ -17,6 +18,7 @@ const subCategorySchema = new mongoose.Schema(
     category: {
       type: mongoose.Types.ObjectId,
       ref: "category",
+      required: true,
     },
     createdBy: {
       type: mongoose.Types.ObjectId,
@@ -28,5 +30,13 @@ const subCategorySchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false }
 );
+
+// ✅ pre-save hook يضمن slug دايمًا
+subCategorySchema.pre("save", function (next) {
+  if (this.isModified("name") || !this.slug) {
+    this.slug = slugify(this.name, { lower: true });
+  }
+  next();
+});
 
 module.exports = mongoose.model("subCategory", subCategorySchema);
