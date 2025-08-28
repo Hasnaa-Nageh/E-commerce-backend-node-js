@@ -35,12 +35,10 @@ const signUp = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res
-    .status(201)
-    .json({
-      message: "Signup successful",
-      user: { id: newUser._id, name, email, role: newUser.role },
-    });
+  res.status(201).json({
+    message: "Signup successful",
+    user: { id: newUser._id, name, email, role: newUser.role },
+  });
 };
 
 const Login = async (req, res) => {
@@ -70,12 +68,10 @@ const Login = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res
-    .status(200)
-    .json({
-      message: "Login successful",
-      user: { id: user._id, name: user.name, email, role: user.role },
-    });
+  res.status(200).json({
+    message: "Login successful",
+    user: { id: user._id, name: user.name, email, role: user.role },
+  });
 };
 
 const logOut = async (req, res) => {
@@ -153,18 +149,25 @@ const me = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "No access token provided" });
     }
+
     let payload;
     try {
       payload = jwt.verify(token, process.env.ACCESS_TOKEN);
     } catch (err) {
-      console.log(err);
       return res
         .status(401)
         .json({ message: "Invalid or expired access token" });
     }
-    res.json(user);
+
+    // نجيب المستخدم من الداتابيز
+    const user = await User.findById(payload.id).select("-password -__v");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     next(err);
   }
 };
