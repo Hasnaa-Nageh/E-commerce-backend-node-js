@@ -31,7 +31,6 @@ const subCategorySchema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-// ✅ pre-save hook يضمن slug دايمًا
 subCategorySchema.pre("save", function (next) {
   if (this.isModified("name") || !this.slug) {
     this.slug = slugify(this.name, { lower: true });
