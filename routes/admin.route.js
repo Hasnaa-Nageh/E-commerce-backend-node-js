@@ -12,7 +12,7 @@ const orderRouter = require("./order.route");
 // const couponRouter = require("./coupon.route");
 const reviewRouter = require("./review.routes");
 
-// router.use(authenticateToken, authorizeRole("admin"));
+router.use(authenticateToken, authorizeRole("admin"));
 
 router.use("/users", userRouter);
 // router.use("/categories", categoryRouter);
