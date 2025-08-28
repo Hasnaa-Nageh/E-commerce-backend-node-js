@@ -39,21 +39,21 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);
 // app.use("/api",)
-app.use("/api/user", userRouter);
 app.use("/api/category", categoryRouter);
+app.use("/api/user", userRouter);
 app.use("/api/sub-category", subCategoryRoute);
-// app.use("/api/brand", brandRouter);
 app.use("/api/product", productRoute);
 app.use("/api/review", ReviewRoute);
 app.use("/api/wish-list", wishListRoute);
 app.use("/api/address", addressRoute);
-// app.use("/api/coupon", couponRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/order", orderRoutes);
-
-// dashboard routes
 app.use("/api/admin", adminRouter);
 
+// app.use("/api/brand", brandRouter);
+// app.use("/api/coupon", couponRoute);
+
+// dashboard routes
 app.get("/", (req, res) => {
   res.send("Backend API is running 🚀");
 });
