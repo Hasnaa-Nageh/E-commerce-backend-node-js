@@ -17,11 +17,21 @@ const adminRouter = require("./routes/admin.route");
 
 const errorHandler = require("./middleware/errorHandler");
 
-const path = require("path"); 
+const path = require("path");
 
 const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 const yaml = require("js-yaml");
+
+// cors
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -48,12 +58,10 @@ app.get("/", (req, res) => {
   res.send("Backend API is running 🚀");
 });
 
-
 const openApiPath = path.resolve(__dirname, "openApi.yaml");
 const openapiSpec = yaml.load(fs.readFileSync(openApiPath, "utf8"));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpec));
-
 
 app.use(errorHandler);
 

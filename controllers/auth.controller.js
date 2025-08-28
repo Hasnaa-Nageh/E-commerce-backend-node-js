@@ -81,11 +81,18 @@ const Login = async (req, res, next) => {
     user.refreshToken = refreshToken;
     await user.save();
 
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 15 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const { password: _, refreshToken: __, ...userData } = user.toObject();
@@ -102,35 +109,34 @@ const Login = async (req, res, next) => {
 };
 
 const refreshToken = async (req, res, next) => {
+  const token = req.cookies.refreshToken;
+  if (!token)
+    return res.status(401).json({ message: "No refresh token provided" });
+
+  let payload;
   try {
-    const token = req.cookies.refreshToken;
-    if (!token) {
-      return res.status(401).json({ message: "No refresh token provided" });
-    }
-
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.REFRESH_TOKEN);
-    } catch (err) {
-      return res
-        .status(403)
-        .json({ message: "Invalid or expired refresh token" });
-    }
-
-    const user = await User.findById(payload.id);
-    if (!user || user.refreshToken !== token) {
-      return res.status(403).json({ message: "Refresh token does not match" });
-    }
-    const newAccessToken = generateAccessToken(user);
-
-    res.status(200).json({
-      message: "Access token refreshed successfully",
-      // accessToken: newAccessToken,
-    });
+    payload = jwt.verify(token, process.env.REFRESH_TOKEN);
   } catch (err) {
-    console.log(`Error :- ${err}`);
-    next(err);
+    return res
+      .status(403)
+      .json({ message: "Invalid or expired refresh token" });
   }
+
+  const user = await User.findById(payload.id);
+  if (!user || user.refreshToken !== token) {
+    return res.status(403).json({ message: "Refresh token does not match" });
+  }
+
+  // طلع accessToken جديد وخزّنه في الكوكي
+  const newAccessToken = generateAccessToken(user);
+  res.cookie("accessToken", newAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 15 * 60 * 1000,
+  });
+
+  res.json({ message: "Access token refreshed successfully" });
 };
 
 const changePassword = async (req, res, next) => {
@@ -224,7 +230,6 @@ const logOut = async (req, res, next) => {
     });
 
     res.status(200).json({ message: "Logged out successfully" });
-    
   } catch (err) {
     console.log(`Error :- ${err}`);
     next(err);
