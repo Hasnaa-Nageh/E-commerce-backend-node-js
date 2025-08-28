@@ -18,17 +18,22 @@ router.use("/:id/sub-category", subCategoryRoute);
 router.post(
   "/",
   authenticateToken,
-  authorizeRole("admin"),
+  // authorizeRole("admin"),
   upload.single("image"),
   addCategory
 );
 router.get("/", getAllCategories);
 router.get("/:id", getSingleCategory);
-router.put("/:id", authenticateToken, upload.single("image"), updateCategory);
+router.put(
+  "/:id",
+  //  authenticateToken,
+  upload.single("image"),
+  updateCategory
+);
 router.delete(
   "/:id",
-  authenticateToken,
-  authorizeRole("admin"),
+  // authenticateToken,
+  // authorizeRole("admin"),
   deleteCategory
 );
 
