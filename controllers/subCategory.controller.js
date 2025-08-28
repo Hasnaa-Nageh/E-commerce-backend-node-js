@@ -82,8 +82,12 @@ const getAllSubCategories = async (req, res, next) => {
       },
     });
   } catch (err) {
-    console.log(`Error :- ${err}`);
-    next(err);
+    console.error("Error in addSubCategory:", err); 
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Internal server error",
+      error: err,
+    });
   }
 };
 
