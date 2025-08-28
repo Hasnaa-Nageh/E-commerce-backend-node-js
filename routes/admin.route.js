@@ -15,7 +15,7 @@ const reviewRouter = require("./review.routes");
 router.use(authenticateToken, authorizeRole("admin"));
 
 router.use("/users", userRouter);
-// router.use("/categories", categoryRouter);
+router.use("/categories", categoryRouter);
 router.use("/sub-categories", subCategoryRouter);
 // router.use("/brands", brandRouter);
 router.use("/products", productRouter);
