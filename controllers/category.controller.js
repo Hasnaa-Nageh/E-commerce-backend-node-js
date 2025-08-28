@@ -22,7 +22,7 @@ const addCategory = async (req, res, next) => {
     }
 
     if (req.file) {
-      req.body.image = req.file.filename; 
+      req.body.image = req.file.filename;
     }
 
     const category = new Category(req.body);
@@ -99,6 +99,9 @@ const updateCategory = async (req, res, next) => {
     if (req.body.name) {
       req.body.slug = slugify(req.body.name, { lower: true });
     }
+    if (req.file) {
+      req.body.image = req.file.filename;
+    }
 
     const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -110,10 +113,6 @@ const updateCategory = async (req, res, next) => {
         success: false,
         message: "Category not found",
       });
-    }
-
-    if (req.file) {
-      req.body.image = req.file.filename; 
     }
 
     return res.status(200).json({

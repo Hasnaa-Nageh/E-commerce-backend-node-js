@@ -28,13 +28,18 @@ router.post(
 
   addProduct
 );
-router.get("/",  getAllProduct);
+router.get("/", getAllProduct);
 router.get("/:id", getSingleProduct);
 router.put(
   "/:id",
   validate(updateProductSchema),
   authenticateToken,
   authorizeRole("admin"),
+  upload.fields([
+    { name: "imgCover", maxCount: 1 },
+    { name: "images", maxCount: 5 },
+  ]),
+
   updateProduct
 );
 router.delete("/:id", authenticateToken, authorizeRole("admin"), deleteProduct);

@@ -44,7 +44,7 @@ const signUp = async (req, res, next) => {
     const { password: _, refreshToken: __, ...userData } = newUser.toObject();
     res.status(201).json({
       message: "signup successful",
-      accessToken,
+      // accessToken,
       user: userData,
     });
   } catch (err) {
@@ -85,14 +85,14 @@ const Login = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 15 * 24 * 60 * 60 * 1000,
     });
 
     const { password: _, refreshToken: __, ...userData } = user.toObject();
 
     res.status(200).json({
       message: "Login successful",
-      accessToken,
+      // accessToken,
       user: userData,
     });
   } catch (err) {
@@ -125,7 +125,7 @@ const refreshToken = async (req, res, next) => {
 
     res.status(200).json({
       message: "Access token refreshed successfully",
-      accessToken: newAccessToken,
+      // accessToken: newAccessToken,
     });
   } catch (err) {
     console.log(`Error :- ${err}`);
@@ -165,6 +165,28 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const me = async (req, res, next) => {
+  try {
+    const token = req.cookies.accessToken;
+    if (!token) {
+      return res.status(401).json({ message: "No access token provided" });
+    }
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.ACCESS_TOKEN);
+    } catch (err) {
+      console.log(err);
+      return res
+        .status(401)
+        .json({ message: "Invalid or expired access token" });
+    }
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 const logOut = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -187,6 +209,14 @@ const logOut = async (req, res, next) => {
     await user.save();
 
     // Clear cookie in browser
+
+    // Clear cookies
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: true,
@@ -194,10 +224,11 @@ const logOut = async (req, res, next) => {
     });
 
     res.status(200).json({ message: "Logged out successfully" });
+    
   } catch (err) {
     console.log(`Error :- ${err}`);
     next(err);
   }
 };
 
-module.exports = { Login, signUp, refreshToken, logOut, changePassword };
+module.exports = { Login, signUp, refreshToken, logOut, changePassword, me };

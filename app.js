@@ -28,10 +28,11 @@ app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);
+// app.use("/api",)
 app.use("/api/user", userRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/sub-category", subCategoryRoute);
-app.use("/api/brand", brandRouter);
+// app.use("/api/brand", brandRouter);
 app.use("/api/product", productRoute);
 app.use("/api/review", ReviewRoute);
 app.use("/api/wish-list", wishListRoute);
