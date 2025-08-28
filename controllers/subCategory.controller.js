@@ -35,7 +35,7 @@ const addSubCategory = async (req, res, next) => {
 
     // image check
     if (req.file) {
-      req.body.imageSub = req.file.path || req.file.secure_url;
+      req.body.imageSub = req.file.path; // هي دي URL في Cloudinary
     }
 
     // save
@@ -56,7 +56,6 @@ const addSubCategory = async (req, res, next) => {
     });
   }
 };
-
 
 const getAllSubCategories = async (req, res, next) => {
   try {
