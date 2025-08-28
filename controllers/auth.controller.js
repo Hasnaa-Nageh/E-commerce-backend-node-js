@@ -4,6 +4,8 @@ const {
 } = require("../utils/tokens");
 const User = require("./../models/user.model");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
+const isProduction = process.env.NODE_ENV === "production";
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
@@ -24,14 +26,14 @@ const signUp = async (req, res) => {
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
     maxAge: 15 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -57,14 +59,14 @@ const Login = async (req, res) => {
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
     maxAge: 15 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -99,12 +101,11 @@ const refreshToken = async (req, res, next) => {
     return res.status(403).json({ message: "Refresh token does not match" });
   }
 
-  // طلع accessToken جديد وخزّنه في الكوكي
   const newAccessToken = generateAccessToken(user);
   res.cookie("accessToken", newAccessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "strict" : "lax",
     maxAge: 15 * 60 * 1000,
   });
 
@@ -145,19 +146,21 @@ const changePassword = async (req, res, next) => {
 
 const me = async (req, res) => {
   try {
-    const userId = req.user.id;
-
+    const userId = req.user && req.user.id;
     const user = await User.findById(userId).select("-password -__v");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json({ user });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 module.exports = { Login, signUp, refreshToken, logOut, changePassword, me };

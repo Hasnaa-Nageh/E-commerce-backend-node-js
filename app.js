@@ -23,6 +23,8 @@ const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 const yaml = require("js-yaml");
 
+app.use(express.json());
+app.use(cookieParser());
 // cors
 const cors = require("cors");
 app.use(
@@ -34,8 +36,6 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRouter);
