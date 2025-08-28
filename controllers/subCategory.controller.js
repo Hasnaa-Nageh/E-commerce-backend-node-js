@@ -4,20 +4,18 @@ const slugify = require("slugify");
 
 const addSubCategory = async (req, res, next) => {
   try {
-    const { name, category } = req.body;
-
-    if (!name) {
+    if (!req.body.name) {
       return res
         .status(400)
         .json({ success: false, message: "SubCategory name is required" });
     }
 
-    // generate slug
-    const slug = slugify(name, { lower: true });
+    // slugify name دايمًا قبل الحفظ
+    req.body.slug = slugify(req.body.name, { lower: true });
 
-    // check if parent category exists
-    const parentCategory = await Category.findById(category);
-    if (!parentCategory) {
+    // check if category exists
+    const category = await Category.findById(req.body.category);
+    if (!category) {
       return res.status(400).json({
         success: false,
         message: "Parent category not found",
@@ -25,7 +23,9 @@ const addSubCategory = async (req, res, next) => {
     }
 
     // check if subCategory exists
-    const existingSubCategory = await SubCategory.findOne({ slug });
+    const existingSubCategory = await SubCategory.findOne({
+      slug: req.body.slug,
+    });
     if (existingSubCategory) {
       return res.status(400).json({
         success: false,
@@ -33,20 +33,13 @@ const addSubCategory = async (req, res, next) => {
       });
     }
 
-    // build subCategory object
-    const subCategoryData = {
-      name,
-      slug,
-      category,
-      createdBy: req.user?._id || null, // لو عندك authentication
-    };
-
-    // attach image if uploaded
+    // image check
     if (req.file) {
-      subCategoryData.imageSub = req.file.path || req.file.secure_url;
+      req.body.imageSub = req.file.path || req.file.secure_url;
     }
 
-    const subCategory = new SubCategory(subCategoryData);
+    // save
+    const subCategory = new SubCategory(req.body);
     await subCategory.save();
 
     return res.status(201).json({
@@ -55,7 +48,7 @@ const addSubCategory = async (req, res, next) => {
       data: subCategory,
     });
   } catch (err) {
-    console.error(`Error :- ${err}`);
+    console.error("Error in addSubCategory:", err);
     return res.status(500).json({
       success: false,
       message: "Something went wrong, please try again later",
@@ -63,6 +56,7 @@ const addSubCategory = async (req, res, next) => {
     });
   }
 };
+
 
 const getAllSubCategories = async (req, res, next) => {
   try {
