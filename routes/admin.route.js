@@ -4,7 +4,7 @@ const { authenticateToken } = require("../middleware/auth.middleware");
 const { authorizeRole } = require("../middleware/authorizeRole.middleware");
 
 const userRouter = require("./user.route");
-const categoryRouter = require("./category.routes");
+// const categoryRouter = require("./category.routes");
 const subCategoryRouter = require("./subCategory.route");
 const brandRouter = require("./brand.routes");
 const productRouter = require("./product.route");
@@ -15,7 +15,7 @@ const reviewRouter = require("./review.routes");
 router.use(authenticateToken, authorizeRole("admin"));
 
 router.use("/users", userRouter);
-router.use("/categories", categoryRouter);
+// router.use("/categories", categoryRouter);
 router.use("/sub-categories", subCategoryRouter);
 // router.use("/brands", brandRouter);
 router.use("/products", productRouter);
