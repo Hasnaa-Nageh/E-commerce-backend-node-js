@@ -19,9 +19,9 @@ const subCategoryRouter = express.Router({ mergeParams: true });
 
 subCategoryRouter.post(
   "/",
+  upload.single("imageSub"),
   authenticateToken,
   authorizeRole("admin"),
-  upload.single("imageSub"),
   validate(createSubCategorySchema),
   addSubCategory
 );

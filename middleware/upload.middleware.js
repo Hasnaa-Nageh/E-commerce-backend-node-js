@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
 
     if (file.fieldname === "image") folder = "categories";
     if (file.fieldname === "logo") folder = "brands";
-    if (file.fieldname === "imagesubcategory") folder = "imageSub";
+    if (file.fieldname === "imageSub") folder = "imageSub";
     if (file.fieldname === "imgCover" || file.fieldname === "images")
       folder = "products";
 
