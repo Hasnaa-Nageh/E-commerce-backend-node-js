@@ -59,14 +59,12 @@ const getAllCategories = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Categories fetched successfully",
-      data: {
-        categories,
-        pagination: {
-          total,
-          page: parseInt(page),
-          limit: parseInt(limit),
-          pages: Math.ceil(total / limit),
-        },
+      data: categories, // directly return array
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(total / limit),
       },
     });
   } catch (err) {
